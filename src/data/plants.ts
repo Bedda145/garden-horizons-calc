@@ -1,0 +1,31 @@
+// src/data/plants.ts
+import type { Plant } from '../types';
+
+export const plants: Plant[] = [
+  { id: 'carrot', name: 'Carrot', baseWeight: 0.07, basePrice: 30, seedCost: 20, imageFile: 'carrot.png', harvestType: 'single' },
+  { id: 'corn', name: 'Corn', baseWeight: 0.18, basePrice: 15, seedCost: 100, imageFile: 'corn.png', harvestType: 'multi' },
+  { id: 'dandelion', name: 'Dandelion', baseWeight: 0.03, basePrice: 45, seedCost: null, imageFile: 'dandelion.png', harvestType: 'single' },
+  { id: 'sunpetal', name: 'Sunpetal', baseWeight: 0.04, basePrice: 60, seedCost: null, imageFile: 'sunpetal.png', harvestType: 'single' },
+  { id: 'onion', name: 'Onion', baseWeight: 0.13, basePrice: 220, seedCost: 200, imageFile: 'onion.png', harvestType: 'single' },
+  { id: 'strawberry', name: 'Strawberry', baseWeight: 0.02, basePrice: 32, seedCost: 800, imageFile: 'strawberry.png', harvestType: 'multi' },
+  { id: 'mushroom', name: 'Mushroom', baseWeight: 0.03, basePrice: 40, seedCost: 1500, imageFile: 'mushroom.png', harvestType: 'single' },
+  { id: 'bellpepper', name: 'Bellpepper', baseWeight: 0.14, basePrice: 50, seedCost: null, imageFile: 'bellpepper.png', harvestType: 'multi' },
+  { id: 'goldenberry', name: 'Goldenberry', baseWeight: 0.02, basePrice: 55, seedCost: null, imageFile: 'goldenberry.png', harvestType: 'multi' },
+  { id: 'beetroot', name: 'Beetroot', baseWeight: 0.09, basePrice: 2000, seedCost: 2500, imageFile: 'beetroot.png', harvestType: 'single' },
+  { id: 'tomato', name: 'Tomato', baseWeight: 0.15, basePrice: 60, seedCost: 4000, imageFile: 'tomato.png', harvestType: 'multi' },
+  { id: 'apple', name: 'Apple', baseWeight: 0.19, basePrice: 270, seedCost: 7000, imageFile: 'apple.png', harvestType: 'multi' },
+  { id: 'rose', name: 'Rose', baseWeight: 0.04, basePrice: 320, seedCost: 10000, imageFile: 'rose.png', harvestType: 'multi' },
+  { id: 'amberpine', name: 'Amberpine', baseWeight: 0.08, basePrice: 400, seedCost: null, imageFile: 'amberpine.png', harvestType: 'single' },
+  { id: 'birch', name: 'Birch', baseWeight: 0.06, basePrice: 500, seedCost: null, imageFile: 'birch.png', harvestType: 'multi' },
+  { id: 'wheat', name: 'Wheat', baseWeight: 0.03, basePrice: 7200, seedCost: 12000, imageFile: 'wheat.png', harvestType: 'single' },
+  { id: 'banana', name: 'Banana', baseWeight: 0.12, basePrice: 750, seedCost: 30000, imageFile: 'banana.png', harvestType: 'multi' },
+  { id: 'plum', name: 'Plum', baseWeight: 0.07, basePrice: 1000, seedCost: 60000, imageFile: 'plum.png', harvestType: 'multi' },
+  { id: 'potato', name: 'Potato', baseWeight: 0.17, basePrice: 1500, seedCost: 100000, imageFile: 'potato.png', harvestType: 'multi' },
+  { id: 'orange', name: 'Orange', baseWeight: 0.21, basePrice: 1800, seedCost: null, imageFile: 'orange.png', harvestType: 'multi' },
+  { id: 'emberwood', name: 'Emberwood', baseWeight: 0.15, basePrice: 2200, seedCost: null, imageFile: 'emberwood.png', harvestType: 'multi' },
+  { id: 'cabbage', name: 'Cabbage', baseWeight: 1.10, basePrice: 60000, seedCost: 150000, imageFile: 'cabbage.png', harvestType: 'single' },
+  { id: 'cherry', name: 'Cherry', baseWeight: 0.01, basePrice: 8000, seedCost: 1000000, imageFile: 'cherry.png', harvestType: 'multi' },
+  { id: 'olive', name: 'Olive', baseWeight: 0.06, basePrice: 10000, seedCost: null, imageFile: 'olive.png', harvestType: 'multi' },
+  { id: 'dawnfruit', name: 'Dawnfruit', baseWeight: 0.06, basePrice: 600, seedCost: null, imageFile: 'dawnfruit.png', harvestType: 'multi' },
+  { id: 'dawnblossom', name: 'Dawnblossom', baseWeight: 0.12, basePrice: 12000, seedCost: null, imageFile: 'dawnblossom.png', harvestType: 'single' }
+];
