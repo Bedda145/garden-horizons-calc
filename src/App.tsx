@@ -587,6 +587,38 @@ function App() {
           </div> {/* <-- This closes the new Right Column wrapper */}
 
         </main>
+
+        {/* Minimalist Developer Footer */}
+        <footer className="mt-12 mb-8 pt-6 border-t border-[#232d27] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium text-gray-500">
+          <div className="flex items-center gap-2">
+            <img src="/sunpetal.png" alt="Icon" className="w-4 h-4 opacity-50 grayscale" />
+            <span>
+              Designed & Developed by <span className="text-emerald-500/80 font-bold tracking-wide">Bedda145</span>
+            </span>
+          </div>
+          
+          <div className="flex gap-4">
+            <a 
+              href="https://ko-fi.com/bedda145" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-emerald-400 transition-colors"
+            >
+              Tip Jar
+            </a>
+            <span className="opacity-30">•</span>
+            <a 
+              href="#" 
+              onClick={(e) => {
+                e.preventDefault();
+                alert("Garden Horizons Pro v1.0\n\nA precision math engine and data visualization tool built for min-maxing crop yields.");
+              }}
+              className="hover:text-emerald-400 transition-colors"
+            >
+              About App
+            </a>
+          </div>
+        </footer>
       </div>
     </div>
   );
