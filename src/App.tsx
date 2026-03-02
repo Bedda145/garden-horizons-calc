@@ -121,14 +121,27 @@ function App() {
       <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Upgraded Header */}
-        <header className="mb-8 border-b border-[#232d27] pb-5 flex items-center gap-4">
-          <img src="/sunpetal.png" alt="Logo" className="w-12 h-12 drop-shadow-[0_0_15px_rgba(16,185,129,0.4)]" />
-          <div>
-            <h1 className="text-4xl font-black text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-200 tracking-tight">
-              Garden Horizons Pro
-            </h1>
-            <p className="text-gray-400 text-sm mt-1 font-medium">Advanced value estimation & ROI tracker.</p>
+        <header className="mb-8 border-b border-[#232d27] pb-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-5">
+          <div className="flex items-center gap-4">
+            <img src="/sunpetal.png" alt="Logo" className="w-12 h-12 drop-shadow-[0_0_15px_rgba(16,185,129,0.4)]" />
+            <div>
+              <h1 className="text-4xl font-black text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-200 tracking-tight">
+                Garden Horizons Pro
+              </h1>
+              <p className="text-gray-400 text-sm mt-1 font-medium">Advanced value estimation & ROI tracker.</p>
+            </div>
           </div>
+
+          {/* Ko-fi Support Button */}
+          <a 
+            href="https://ko-fi.com/bedda145" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="group flex items-center justify-center gap-2 bg-[#161d19]/80 hover:bg-emerald-500/10 border border-[#232d27] hover:border-emerald-500/50 text-gray-400 hover:text-emerald-300 px-4 py-2.5 rounded-xl transition-all font-bold text-sm backdrop-blur-sm shadow-lg shadow-black/20 hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+          >
+            <span className="text-lg group-hover:scale-110 transition-transform drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]">☕</span>
+            Support the Dev
+          </a>
         </header>
 
         <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
