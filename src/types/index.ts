@@ -43,9 +43,11 @@ export interface CartItem {
   plant: Plant;
   weight: number;
   ripeness: Ripeness;
+  ripeningValue: number;
   variant: ColorVariant;
   mutations: Mutation[];
   harvests: number;
+  plotSize: number;
   estimatedValue: number;
   netProfit: number;
 }

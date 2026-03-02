@@ -9,12 +9,13 @@ function App() {
   // State: This acts as the memory for our calculator's current settings
   const [selectedPlant, setSelectedPlant] = useState(plants[0]); // Defaults to the Carrot we made
   const [weight, setWeight] = useState(selectedPlant.baseWeight);
-  const [ripeness, setRipeness] = useState<Ripeness>('Unripe');
+  const [ripeningValue, setRipeningValue] = useState<number>(1.0);
   const [variant, setVariant] = useState<ColorVariant>('None');
   const [mutations, setMutations] = useState<Mutation[]>([]); // Empty for now until we build the mutation grid
   const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [harvests, setHarvests] = useState(1);
+  const [plotSize, setPlotSize] = useState(1);
 
   // This creates a new array on the fly containing only the plants that match the search
   const filteredPlants = plants.filter(plant => 
@@ -34,10 +35,42 @@ function App() {
     }
   };
 
-  // The engine: This runs instantly whenever a state variable changes
-  const estimatedValue = calculateSellValue(selectedPlant, weight, ripeness, variant, mutations);
-  const totalEstimatedValue = estimatedValue * harvests; // Accounts for multiple yields!
-  const netProfit = totalEstimatedValue - (selectedPlant.seedCost || 0);
+// --- NEW PRECISION MATH ENGINE ---
+  // 1. Determine the label automatically based on the exact slider value
+  const ripeness: Ripeness = ripeningValue < 2 ? 'Unripe' : ripeningValue < 3 ? 'Ripened' : 'Lush';
+
+  // 2. We pass 'Unripe' to bypass your old math, and multiply by our exact precision decimal instead
+  const baseEstimatedValue = calculateSellValue(selectedPlant, weight, 'Unripe', variant, mutations);
+  const exactEstimatedValue = Math.round(baseEstimatedValue * ripeningValue);
+  
+  // 3. Scale it by harvests and plots
+  const totalEstimatedValue = exactEstimatedValue * harvests * plotSize; 
+  const totalSeedCost = (selectedPlant.seedCost || 0) * plotSize;
+  const netProfit = totalEstimatedValue - totalSeedCost;
+
+  // Calculate ROI %. If seed cost is 0, it returns null (which we will style as "Pure Profit")
+  const roiPercentage = totalSeedCost > 0 ? ((netProfit / totalSeedCost) * 100) : null;
+
+  // --- PROFITABILITY TIER LOGIC ---
+  let tier = 'C';
+  let tierStyles = '';
+  
+  if (roiPercentage === null || roiPercentage >= 300) {
+    tier = 'S'; // God-tier (or pure profit forageable)
+    tierStyles = 'text-amber-400 border-amber-400/50 bg-amber-400/10 shadow-[0_0_15px_rgba(251,191,36,0.4)]';
+  } else if (roiPercentage >= 100) {
+    tier = 'A'; // Excellent return
+    tierStyles = 'text-teal-400 border-teal-400/40 bg-teal-400/10 shadow-[0_0_10px_rgba(45,212,191,0.2)]';
+  } else if (roiPercentage >= 20) {
+    tier = 'B'; // Good return
+    tierStyles = 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10';
+  } else if (roiPercentage >= 0) {
+    tier = 'C'; // Breaking even or slight profit
+    tierStyles = 'text-gray-400 border-gray-600/30 bg-gray-600/10';
+  } else {
+    tier = 'F'; // Taking a loss
+    tierStyles = 'text-red-400 border-red-500/40 bg-red-500/10 shadow-[0_0_10px_rgba(239,68,68,0.2)]';
+  }
 
   // --- NEW CART LOGIC ---
   const addToCart = () => {
@@ -46,9 +79,11 @@ function App() {
       plant: selectedPlant,
       weight,
       ripeness,
+      ripeningValue,
       variant,
       mutations: [...mutations],
-      harvests, // Save the amount they yielded
+      harvests, 
+      plotSize, // <-- Save it to the receipt
       estimatedValue: totalEstimatedValue, 
       netProfit
     };
@@ -132,12 +167,18 @@ function App() {
                       setWeight(plant.baseWeight); // Pro UX: Reset weight when changing plants
                       setHarvests(1);
                     }}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all ${
+                    // Removed all scaling. Added overflow-hidden and internal gradient glows.
+                    className={`relative flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-colors duration-200 overflow-hidden ${
                       selectedPlant.id === plant.id
-                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
-                        : 'bg-gray-900 border-gray-800/50 text-gray-500 hover:bg-gray-800 hover:text-gray-300 hover:border-gray-700'
+                        ? 'bg-linear-to-br from-emerald-500/20 to-transparent border-emerald-500 text-emerald-300 shadow-[inset_0_0_20px_rgba(16,185,129,0.15)]'
+                        : 'bg-gray-900 border-gray-800/50 text-gray-500 hover:bg-gray-800/80 hover:text-gray-300 hover:border-gray-700'
                     }`}
                   >
+                    {/* Visual Indicator: Tiny colored dot for multi-harvest plants */}
+                    {plant.harvestType === 'multi' && (
+                      <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.8)]" title="Multi-Harvest Crop"></span>
+                    )}
+                    
                     <img 
                       src={`/${plant.imageFile}`} 
                       alt={plant.name} 
@@ -147,8 +188,8 @@ function App() {
                         (e.target as HTMLImageElement).style.display = 'none';
                       }}
                     />
-                    <span className="text-sm font-bold">{plant.name}</span>
-                    <span className="text-xs opacity-70 font-medium">{plant.baseWeight} kg</span>
+                    <span className="text-sm font-bold z-10">{plant.name}</span>
+                    <span className="text-xs opacity-70 font-medium z-10">{plant.baseWeight} kg</span>
                   </button>
                 ))}
               </div>
@@ -187,25 +228,83 @@ function App() {
               />
             </div>
             
-            {/* Ripening Multiplier */}
+            {/* Farm Plot Size Toggle */}
             <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
-              <label className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-3 block">
-                Ripening Multiplier
-              </label>
-              <div className="grid grid-cols-3 gap-3">
-                {(['Unripe', 'Ripened', 'Lush'] as const).map((r) => (
+              <div className="flex justify-between items-end mb-3">
+                <label className="text-sm font-medium text-gray-400 uppercase tracking-wider block">
+                  Farm Plot Size
+                </label>
+                {plotSize > 1 && <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-2 py-0.5 rounded">Mass Harvest</span>}
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {[1, 10, 50, 100].map((size) => (
                   <button
-                    key={r}
-                    onClick={() => setRipeness(r)}
-                    className={`py-3 rounded-lg text-sm font-bold border transition-all ${
-                      ripeness === r
+                    key={size}
+                    onClick={() => setPlotSize(size)}
+                    className={`py-2 rounded-lg text-sm font-bold border transition-all ${
+                      plotSize === size
                         ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.15)]'
-                        : 'bg-gray-900 border-gray-800 text-gray-500 hover:bg-gray-800 hover:text-gray-300'
+                        : 'bg-[#161d19] border-[#232d27] text-gray-500 hover:bg-[#1a241f] hover:text-gray-300'
                     }`}
                   >
-                    {r}
+                    {size}x
                   </button>
                 ))}
+              </div>
+            </div>
+            
+            {/* Ripening Precision Slider */}
+            <div className="bg-gray-950 p-4 rounded-xl border border-gray-800">
+              <div className="flex justify-between items-center mb-4">
+                <label className="text-sm font-medium text-gray-400 uppercase tracking-wider">
+                  Ripening Multiplier
+                </label>
+                
+                {/* Precision Input */}
+                <div className="flex items-center bg-[#0d1410] border border-[#232d27] rounded-lg px-2 py-1">
+                  <input
+                    type="number"
+                    min="1.00"
+                    max="3.00"
+                    step="0.01"
+                    value={ripeningValue}
+                    onChange={(e) => {
+                      let val = parseFloat(e.target.value) || 1;
+                      if (val > 3) val = 3; // Hard cap at Lush
+                      setRipeningValue(val);
+                    }}
+                    className="w-16 bg-transparent text-right text-sm font-bold text-emerald-400 focus:outline-none"
+                  />
+                  <span className="text-sm font-bold text-emerald-600/50 ml-1">x</span>
+                </div>
+              </div>
+              
+              <input 
+                type="range" 
+                min="1.00" 
+                max="3.00" 
+                step="0.01"
+                value={ripeningValue}
+                onChange={(e) => setRipeningValue(parseFloat(e.target.value))}
+                className="w-full accent-emerald-500 cursor-pointer mb-3"
+              />
+
+              {/* Dynamic Label Indicator */}
+              <div className="flex justify-between items-center">
+                <span className={`text-xs font-bold px-3 py-1 rounded-md border tracking-wide uppercase ${
+                  ripeness === 'Unripe' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]' :
+                  ripeness === 'Ripened' ? 'bg-lime-500/10 text-lime-400 border-lime-500/20 shadow-[0_0_10px_rgba(132,204,22,0.1)]' :
+                  'bg-emerald-500/20 text-emerald-400 border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
+                }`}>
+                  {ripeness} Stage
+                </span>
+                
+                {/* Quick-Set Presets for speed */}
+                <div className="flex gap-2">
+                  <button onClick={() => setRipeningValue(1.0)} className="text-[10px] font-bold text-gray-500 hover:text-amber-500 transition-colors">1.0x</button>
+                  <button onClick={() => setRipeningValue(2.0)} className="text-[10px] font-bold text-gray-500 hover:text-lime-400 transition-colors">2.0x</button>
+                  <button onClick={() => setRipeningValue(3.0)} className="text-[10px] font-bold text-gray-500 hover:text-emerald-400 transition-colors">3.0x (Max)</button>
+                </div>
               </div>
             </div>
 
@@ -258,24 +357,40 @@ function App() {
                 {mutationsData.map((mut) => {
                   const isActive = mutations.some((m) => m.id === mut.id);
                   
+                  // Define bespoke elemental colors for each mutation type
+                  let activeStyles = 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.15)]';
+                  if (mut.id === 'foggy') activeStyles = 'bg-slate-500/20 border-slate-400 text-slate-300 shadow-[0_0_10px_rgba(148,163,184,0.15)]';
+                  if (mut.id === 'soaked') activeStyles = 'bg-blue-500/20 border-blue-400 text-blue-300 shadow-[0_0_10px_rgba(96,165,250,0.15)]';
+                  if (mut.id === 'chilled') activeStyles = 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.15)]';
+                  if (mut.id === 'flooded') activeStyles = 'bg-indigo-500/20 border-indigo-400 text-indigo-300 shadow-[0_0_10px_rgba(129,140,248,0.15)]';
+                  if (mut.id === 'snowy') activeStyles = 'bg-slate-200/20 border-slate-300 text-slate-100 shadow-[0_0_10px_rgba(226,232,240,0.15)]';
+                  if (mut.id === 'sandy') activeStyles = 'bg-amber-600/20 border-amber-500 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.15)]';
+                  if (mut.id === 'frostbit') activeStyles = 'bg-sky-500/20 border-sky-400 text-sky-300 shadow-[0_0_10px_rgba(56,189,248,0.15)]';
+                  if (mut.id === 'mossy') activeStyles = 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.15)]';
+                  if (mut.id === 'shocked') activeStyles = 'bg-yellow-400/20 border-yellow-400 text-yellow-300 shadow-[0_0_10px_rgba(250,204,21,0.15)]';
+                  if (mut.id === 'muddy') activeStyles = 'bg-orange-800/30 border-orange-600 text-orange-400 shadow-[0_0_10px_rgba(234,88,12,0.15)]';
+                  if (mut.id === 'starstruck') activeStyles = 'bg-purple-500/20 border-purple-400 text-purple-300 shadow-[0_0_10px_rgba(192,132,252,0.15)]';
+                  if (mut.id === 'meteoric') activeStyles = 'bg-fuchsia-500/20 border-fuchsia-400 text-fuchsia-300 shadow-[0_0_10px_rgba(232,121,249,0.15)]';
+
                   return (
                     <button
                       key={mut.id}
                       onClick={() => toggleMutation(mut)}
                       className={`py-2 px-1 rounded-lg text-xs font-bold border transition-all flex flex-col items-center justify-center gap-1 ${
                         isActive
-                          ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.1)]'
+                          ? activeStyles
                           : 'bg-[#161d19] border-[#232d27] text-gray-500 hover:bg-[#1a241f] hover:text-gray-300'
                       }`}
                     >
+                      {/* Notice we removed the hardcoded emerald text so the icon inherits the parent's color! */}
                       <mut.icon 
                         className={`w-6 h-6 mb-1 transition-all ${
-                          isActive ? 'text-emerald-400 drop-shadow-md' : 'text-gray-600'
+                          isActive ? 'drop-shadow-md' : 'text-gray-600'
                         }`} 
                         strokeWidth={isActive ? 2.5 : 1.5}
                       />
                       <span>{mut.name}</span>
-                      <span className={`text-[10px] ${isActive ? 'text-emerald-500/80' : 'text-gray-600'}`}>
+                      <span className={`text-[10px] ${isActive ? 'opacity-80' : 'text-gray-600'}`}>
                         {mut.multiplier}x
                       </span>
                     </button>
@@ -289,10 +404,19 @@ function App() {
           <div className="space-y-6 lg:sticky lg:top-8 h-fit">
             
             {/* The Single Plant Calculator Box */}
-            <div className="bg-[#0d1410] p-6 rounded-2xl border border-[#1a2b20] shadow-[0_0_30px_rgba(16,185,129,0.05)] flex flex-col items-center justify-center text-center">
-              <h2 className="text-sm font-semibold text-emerald-500/80 uppercase tracking-widest mb-4">
-              Estimated Sell Value
-            </h2>
+            <div className="relative bg-[#0d1410] p-6 rounded-2xl border border-[#1a2b20] shadow-[0_0_30px_rgba(16,185,129,0.05)] flex flex-col items-center justify-center text-center overflow-hidden">
+              
+              {/* Profitability Tier Badge */}
+              <div 
+                className={`absolute top-4 right-4 w-10 h-10 flex flex-col items-center justify-center rounded-xl border-2 font-black transition-all duration-300 ${tierStyles}`}
+                title="Profitability Tier based on ROI"
+              >
+                <span className="text-xl leading-none">{tier}</span>
+              </div>
+
+              <h2 className="text-sm font-semibold text-emerald-500/80 uppercase tracking-widest mb-4 mt-2">
+                Estimated Sell Value
+              </h2>
             <div className="text-7xl font-black text-emerald-400 mb-6 tabular-nums">
               {totalEstimatedValue} <span className="text-4xl text-emerald-600/50">$</span>
             </div>
@@ -305,7 +429,9 @@ function App() {
               </div>
               <div className="flex justify-between py-1">
                 <span>Ripeness</span>
-                <span className="font-medium text-gray-200">{ripeness}</span>
+                <span className="font-medium text-gray-200">
+                  {ripeness} <span className="text-gray-500 text-xs font-bold">({ripeningValue.toFixed(2)}x)</span>
+                </span>
               </div>
               <div className="flex justify-between py-1">
                 <span>Variant</span>
@@ -335,18 +461,48 @@ function App() {
                 </div>
               )}
               
+              {/* Show the Farm Plot Size if they are doing a mass harvest */}
+              {plotSize > 1 && (
+                <div className="flex justify-between py-1 mt-3 border-t border-[#1a2b20] pt-3">
+                  <span className="text-sm font-medium text-emerald-500/80 uppercase tracking-widest">Farm Plots</span>
+                  <span className="font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">{plotSize}x</span>
+                </div>
+              )}
+
               {/* Seed Cost & Profit Section */}
               <div className="mt-3 pt-3 border-t border-emerald-900/30">
                 {/* Only show the seed cost line if it actually has a cost */}
                 {selectedPlant.seedCost !== null && (
                   <div className="flex justify-between py-1 text-gray-400">
-                    <span>Seed Cost</span>
-                    <span className="font-medium text-red-400/80">-{selectedPlant.seedCost} $</span>
+                    <span>Seed Cost {plotSize > 1 ? `(x${plotSize})` : ''}</span>
+                    <span className="font-medium text-red-400/80">-{totalSeedCost} $</span>
                   </div>
                 )}
-                <div className="flex justify-between py-1 mt-1">
-                  <span className="font-bold text-gray-200">Net Profit</span>
-                  <span className={`font-bold ${netProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <div className="flex justify-between items-center py-1 mt-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-gray-200">Net Profit</span>
+                    
+                    {/* Glowing ROI Badge */}
+                    {roiPercentage !== null ? (
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border tracking-wide transition-all ${
+                        roiPercentage < 0 
+                          ? 'bg-red-500/10 text-red-400 border-red-500/20' 
+                          : roiPercentage < 100 
+                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                            : roiPercentage < 300
+                              ? 'bg-teal-500/20 text-teal-300 border-teal-500/40 shadow-[0_0_10px_rgba(45,212,191,0.2)]'
+                              : 'bg-amber-400/20 text-amber-400 border-amber-400/50 shadow-[0_0_15px_rgba(251,191,36,0.4)] animate-pulse'
+                      }`}>
+                        {roiPercentage > 0 ? '+' : ''}{roiPercentage.toFixed(0)}% ROI
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full border bg-amber-400/20 text-amber-400 border-amber-400/50 shadow-[0_0_15px_rgba(251,191,36,0.4)] animate-pulse tracking-wide">
+                        PURE PROFIT
+                      </span>
+                    )}
+                  </div>
+                  
+                  <span className={`text-lg font-black ${netProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                     {netProfit > 0 ? '+' : ''}{netProfit} $
                   </span>
                 </div>
