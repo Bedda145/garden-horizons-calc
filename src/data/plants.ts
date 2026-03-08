@@ -34,5 +34,19 @@ export const plants: Plant[] = [
   { id: 'lablushberry', name: 'Lablush Berry', baseWeight: 0.02, basePrice: 55, seedCost: null, imageFile: 'lablushberry.png', harvestType: 'multi' },
   { id: 'starvine', name: 'Starvine', baseWeight: 0.05, basePrice: 360, seedCost: null, imageFile: 'starvine.png', harvestType: 'multi' },
   { id: 'radiantpetal', name: 'Radiant Petal', baseWeight: 0.01, basePrice: 5000, seedCost: null, imageFile: 'radiantpetal.png', harvestType: 'multi' },
-  { id: 'octobranch', name: 'Octobranch', baseWeight: 0.20, basePrice: 6000, seedCost: null, imageFile: 'octobranch.png', harvestType: 'multi' }
+  { id: 'octobranch', name: 'Octobranch', baseWeight: 0.20, basePrice: 6000, seedCost: null, imageFile: 'octobranch.png', harvestType: 'multi' },
+  
+  // --- ROYAL SEED PACK ---
+  { id: 'twistedsunflower', name: 'Twisted Sunflower', baseWeight: 0.10, basePrice: 50, seedCost: null, imageFile: 'twistedsunflower.png', harvestType: 'single' }, // [cite: 35]
+  { id: 'glowcorn', name: 'Glowcorn', baseWeight: 0.10, basePrice: 35, seedCost: null, imageFile: 'glowcorn.png', harvestType: 'single' }, // [cite: 35]
+  { id: 'firefern', name: 'Firefern', baseWeight: 0.10, basePrice: 300, seedCost: null, imageFile: 'firefern.png', harvestType: 'single' }, // [cite: 35]
+  { id: 'titanbloom', name: 'Titan Bloom', baseWeight: 0.10, basePrice: 1600, seedCost: null, imageFile: 'titanbloom.png', harvestType: 'single' }, // [cite: 35]
+  { id: 'glowvein', name: 'Glowvein', baseWeight: 0.10, basePrice: 11000, seedCost: null, imageFile: 'glowvein.png', harvestType: 'single' }, // [cite: 35]
+
+  // --- STREAK SEED PACK ---
+  { id: 'lostlight', name: 'Lostlight', baseWeight: 0.10, basePrice: 40, seedCost: null, imageFile: 'lostlight.png', harvestType: 'single' }, // [cite: 41]
+  { id: 'roundmelon', name: 'Roundmelon', baseWeight: 0.10, basePrice: 38, seedCost: null, imageFile: 'roundmelon.png', harvestType: 'single' }, // [cite: 41]
+  { id: 'infernoppeper', name: 'Inferno Pepper', baseWeight: 0.10, basePrice: 280, seedCost: null, imageFile: 'infernoppeper.png', harvestType: 'single' }, // [cite: 41]
+  { id: 'glowflower', name: 'Glowflower', baseWeight: 0.10, basePrice: 1400, seedCost: null, imageFile: 'glowflower.png', harvestType: 'single' }, // [cite: 41]
+  { id: 'bluerose', name: 'Bluerose', baseWeight: 0.10, basePrice: 11500, seedCost: null, imageFile: 'bluerose.png', harvestType: 'single' } // [cite: 41]
 ];
