@@ -16,6 +16,7 @@ function App() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [harvests, setHarvests] = useState(1);
   const [plotSize, setPlotSize] = useState(1);
+  const [isPackModalOpen, setIsPackModalOpen] = useState(false);
 
   // This creates a new array on the fly containing only the plants that match the search
   const filteredPlants = plants.filter(plant => 
@@ -156,9 +157,17 @@ function App() {
                 <label className="text-sm font-medium text-gray-400 uppercase tracking-wider block">
                   Select Plant
                 </label>
-                <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">
-                  {filteredPlants.length} Available
-                </span>
+                <div className="flex items-center gap-3">
+                  <button 
+                    onClick={() => setIsPackModalOpen(true)}
+                    className="text-[10px] sm:text-xs font-bold text-amber-400 bg-amber-400/10 hover:bg-amber-400/20 px-3 py-1.5 rounded-lg border border-amber-400/30 transition-colors flex items-center gap-1.5 shadow-[0_0_10px_rgba(251,191,36,0.1)]"
+                  >
+                    <span>📦</span> Pack Odds
+                  </button>
+                  <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1.5 rounded">
+                    {filteredPlants.length} Available
+                  </span>
+                </div>
               </div>
 
               {/* Real-time Search Input */}
@@ -587,6 +596,316 @@ function App() {
           </div> {/* <-- This closes the new Right Column wrapper */}
 
         </main>
+
+        {/* Seed Pack Info Modal */}
+        {isPackModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="bg-[#161d19] border border-[#232d27] rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl shadow-black custom-scrollbar">
+              
+              {/* Modal Header */}
+              <div className="flex justify-between items-center p-6 border-b border-[#232d27] sticky top-0 bg-[#161d19]/90 backdrop-blur-md z-10">
+                <h2 className="text-2xl font-black text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-200">
+                  Seed Pack Drop Rates
+                </h2>
+                <button 
+                  onClick={() => setIsPackModalOpen(false)}
+                  className="text-gray-400 hover:text-white bg-[#232d27] hover:bg-red-500/20 hover:border-red-500/50 border border-transparent p-2 rounded-lg transition-all"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-6 space-y-10 text-sm">
+                
+                {/* Royal Pack Section */}
+                <div>
+                  <h3 className="text-2xl font-black text-amber-400 mb-4 flex items-center gap-3">
+                    <img src="/royalseedpack.png" alt="Royal Seed Pack" className="w-12 h-12 object-contain drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]" />
+                    Royal Seed Pack
+                  </h3>
+                  <div className="bg-[#0d1410] rounded-xl border border-[#232d27] overflow-hidden shadow-inner">
+                    <table className="w-full text-left border-collapse">
+                      <thead className="bg-[#161d19] text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest border-b border-[#232d27]">
+                        <tr>
+                          <th className="px-5 py-4">Plant</th>
+                          <th className="px-4 py-4 w-24">Value</th>
+                          <th className="px-4 py-4 w-1/3">Free Drop</th>
+                          <th className="px-4 py-4 w-1/3">Premium</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#1a241f]">
+                        
+                        {/* Twisted Sunflower - Common */}
+                        <tr className="hover:bg-[#161d19] transition-colors group">
+                          <td className="px-5 py-3 flex items-center gap-4">
+                            <img src="/twistedsunflower.png" alt="Twisted Sunflower" className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col">
+                              <span className="font-bold text-gray-200">Twisted Sunflower</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-500">Common</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-bold text-gray-400">50 $</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" style={{ width: '54%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-emerald-400">54%</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] opacity-70" style={{ width: '44%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-emerald-500/70">44%</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Glowcorn - Uncommon */}
+                        <tr className="hover:bg-[#161d19] transition-colors group">
+                          <td className="px-5 py-3 flex items-center gap-4">
+                            <img src="/glowcorn.png" alt="Glowcorn" className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col">
+                              <span className="font-bold text-gray-200">Glowcorn</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-sky-400">Uncommon</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-bold text-gray-400">35 $</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]" style={{ width: '30%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-sky-400">30%</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)] opacity-70" style={{ width: '33%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-sky-400/70">33%</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Firefern - Rare */}
+                        <tr className="hover:bg-[#161d19] transition-colors group">
+                          <td className="px-5 py-3 flex items-center gap-4">
+                            <img src="/firefern.png" alt="Firefern" className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col">
+                              <span className="font-bold text-gray-200">Firefern</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-indigo-400">Rare</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-bold text-gray-400">300 $</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]" style={{ width: '12%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-indigo-400">12%</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)] opacity-70" style={{ width: '16%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-indigo-400/70">16%</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Titan Bloom - Epic */}
+                        <tr className="hover:bg-[#161d19] transition-colors group">
+                          <td className="px-5 py-3 flex items-center gap-4">
+                            <img src="/titanbloom.png" alt="Titan Bloom" className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col">
+                              <span className="font-bold text-fuchsia-100">Titan Bloom</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-fuchsia-400">Epic</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-bold text-gray-300">1,600 $</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-fuchsia-500 shadow-[0_0_8px_rgba(217,70,239,0.8)]" style={{ width: '3.5%', minWidth: '4px' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-fuchsia-400">3.5%</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-fuchsia-500 shadow-[0_0_8px_rgba(217,70,239,0.8)] opacity-70" style={{ width: '5.5%', minWidth: '4px' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-fuchsia-400/70">5.5%</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Glowvein - Legendary */}
+                        <tr className="hover:bg-[#161d19] transition-colors group bg-amber-950/10">
+                          <td className="px-5 py-3 flex items-center gap-4">
+                            <img src="/glowvein.png" alt="Glowvein" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col">
+                              <span className="font-black text-amber-300">Glowvein</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-amber-500">Legendary</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-black text-emerald-400">11,000 $</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.9)]" style={{ width: '0.5%', minWidth: '4px' }}></div></div>
+                              <span className="font-black text-xs w-9 text-right text-amber-400">0.5%</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.9)] opacity-80" style={{ width: '1.5%', minWidth: '4px' }}></div></div>
+                              <span className="font-black text-xs w-9 text-right text-amber-500/80">1.5%</span>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Streak Pack Section */}
+                <div>
+                  <h3 className="text-2xl font-black text-blue-400 mb-4 flex items-center gap-3">
+                    <img src="/streakseedpack.png" alt="Streak Seed Pack" className="w-12 h-12 object-contain drop-shadow-[0_0_15px_rgba(96,165,250,0.3)]" />
+                    Streak Seed Pack
+                  </h3>
+                  <div className="bg-[#0d1410] rounded-xl border border-[#232d27] overflow-hidden shadow-inner">
+                    <table className="w-full text-left border-collapse">
+                      <thead className="bg-[#161d19] text-gray-400 text-[10px] sm:text-xs uppercase tracking-widest border-b border-[#232d27]">
+                        <tr>
+                          <th className="px-5 py-4">Plant</th>
+                          <th className="px-4 py-4 w-24">Value</th>
+                          <th className="px-4 py-4 w-1/3">Free Drop</th>
+                          <th className="px-4 py-4 w-1/3">Premium</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#1a241f]">
+                        
+                        {/* Lostlight - Common */}
+                        <tr className="hover:bg-[#161d19] transition-colors group">
+                          <td className="px-5 py-3 flex items-center gap-4">
+                            <img src="/lostlight.png" alt="Lostlight" className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col">
+                              <span className="font-bold text-gray-200">Lostlight</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-500">Common</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-bold text-gray-400">40 $</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]" style={{ width: '54%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-emerald-400">54%</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] opacity-70" style={{ width: '44%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-emerald-500/70">44%</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Roundmelon - Uncommon */}
+                        <tr className="hover:bg-[#161d19] transition-colors group">
+                          <td className="px-5 py-3 flex items-center gap-4">
+                            <img src="/roundmelon.png" alt="Roundmelon" className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col">
+                              <span className="font-bold text-gray-200 whitespace-nowrap">Roundmelon</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-sky-400">Uncommon</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-bold text-gray-400">38 $</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]" style={{ width: '30%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-sky-400">30%</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)] opacity-70" style={{ width: '33%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-sky-400/70">33%</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Inferno Pepper - Rare */}
+                        <tr className="hover:bg-[#161d19] transition-colors group">
+                          <td className="px-5 py-3 flex items-center gap-4">
+                            <img src="/infernoppeper.png" alt="Inferno Pepper" className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col">
+                              <span className="font-bold text-gray-200">Inferno Pepper</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-indigo-400">Rare</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-bold text-gray-400">280 $</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]" style={{ width: '12%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-indigo-400">12%</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)] opacity-70" style={{ width: '16%' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-indigo-400/70">16%</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Glowflower - Epic */}
+                        <tr className="hover:bg-[#161d19] transition-colors group">
+                          <td className="px-5 py-3 flex items-center gap-4">
+                            <img src="/glowflower.png" alt="Glowflower" className="w-10 h-10 object-contain drop-shadow-md group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col">
+                              <span className="font-bold text-fuchsia-100">Glowflower</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-fuchsia-400">Epic</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-bold text-gray-300">1,400 $</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-fuchsia-500 shadow-[0_0_8px_rgba(217,70,239,0.8)]" style={{ width: '3.5%', minWidth: '4px' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-fuchsia-400">3.5%</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-fuchsia-500 shadow-[0_0_8px_rgba(217,70,239,0.8)] opacity-70" style={{ width: '5.5%', minWidth: '4px' }}></div></div>
+                              <span className="font-bold text-xs w-9 text-right text-fuchsia-400/70">5.5%</span>
+                            </div>
+                          </td>
+                        </tr>
+
+                        {/* Bluerose - Legendary */}
+                        <tr className="hover:bg-[#161d19] transition-colors group bg-amber-950/10">
+                          <td className="px-5 py-3 flex items-center gap-4">
+                            <img src="/bluerose.png" alt="Bluerose" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col">
+                              <span className="font-black text-amber-300">Bluerose</span>
+                              <span className="text-[10px] font-black uppercase tracking-wider text-amber-500">Legendary</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-black text-emerald-400">11,500 $</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.9)]" style={{ width: '0.5%', minWidth: '4px' }}></div></div>
+                              <span className="font-black text-xs w-9 text-right text-amber-400">0.5%</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 bg-gray-900 rounded-full h-1.5 overflow-hidden border border-gray-800"><div className="h-full bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.9)] opacity-80" style={{ width: '1.5%', minWidth: '4px' }}></div></div>
+                              <span className="font-black text-xs w-9 text-right text-amber-500/80">1.5%</span>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Minimalist Developer Footer */}
         <footer className="mt-12 mb-8 pt-6 border-t border-[#232d27] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium text-gray-500">
